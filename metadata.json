@@ -1,0 +1,6 @@
+{
+  "name": "EduTPACK SPLDV - RPP & Media Pembelajaran Interaktif",
+  "description": "Perangkat RPP Berbasis TPACK & Deep Learning Matematika Kelas X (SPLDV) beserta Media Pembelajaran Interaktif (MPI) mandiri berstandar Kemendikdasmen.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

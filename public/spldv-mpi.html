@@ -1,0 +1,1903 @@
+<!--
+========================================================================================
+LINEARQUEST: DUAL-VARIABLE INTERACTIVE LAB (SPLDV EXPLORER)
+Grade X Mathematics - System of Linear Equations in Two Variables (SLETV / SPLDV)
+Designed under TPACK Framework & Deep Learning Cycle (Kemendikdasmen Standard)
+========================================================================================
+
+HOW TO RUN THIS FILE:
+1. Double-click this file or right-click and select "Open With" -> Google Chrome, Microsoft Edge, Mozilla Firefox, or Apple Safari.
+2. No internet connection or external libraries required. Everything is 100% self-contained (Pure HTML5, CSS3, Vanilla ES6 JavaScript, HTML5 Canvas, Web Audio API).
+3. Works smoothly on Laptops, Desktops, Chromebooks, Tablets, and Smartphones.
+========================================================================================
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LinearQuest: Systems of Linear Equations in Two Variables (SPLDV) Interactive Lab</title>
+  <style>
+    /* -----------------------------------------------------------
+       CSS VARIABLES & THEME CONFIGURATION
+       Mayer's Signaling Principle: High visual hierarchy & color coding
+       ----------------------------------------------------------- */
+    :root {
+      --primary: #1e3a8a;
+      --primary-light: #3b82f6;
+      --primary-dark: #172554;
+      --accent-x: #2563eb;       /* Variable x color (Blue) */
+      --accent-y: #d97706;       /* Variable y color (Amber) */
+      --accent-k: #059669;       /* Constant color (Green) */
+      --accent-alert: #dc2626;   /* Warning/Error (Red) */
+      --bg-base: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      --radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.05);
+      --font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      line-height: 1.6;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+
+    /* -----------------------------------------------------------
+       TOP HEADER & NAVIGATION BAR (Non-Linearity & User Control)
+       ----------------------------------------------------------- */
+    header {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 50%, #2563eb 100%);
+      color: #ffffff;
+      padding: 1rem 1.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-md);
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .brand-icon {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 1.25rem;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .brand-title h1 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-title p {
+      font-size: 0.75rem;
+      color: #bfdbfe;
+    }
+
+    .header-controls {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .score-badge {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      padding: 0.35rem 0.8rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .audio-toggle-btn {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: white;
+      border-radius: 20px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .audio-toggle-btn:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Nav Bar (Segmenting & Free Branching) */
+    nav.nav-bar {
+      background: #ffffff;
+      border-bottom: 1px solid var(--border-color);
+      overflow-x: auto;
+      white-space: nowrap;
+      position: sticky;
+      top: 72px;
+      z-index: 90;
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      padding: 0.5rem 1rem;
+      gap: 0.5rem;
+    }
+
+    .nav-tab {
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: 8px;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .nav-tab:hover {
+      color: var(--primary-light);
+      background-color: #f1f5f9;
+    }
+
+    .nav-tab.active {
+      color: var(--primary);
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+    }
+
+    .nav-tab .badge-step {
+      background: #cbd5e1;
+      color: #334155;
+      font-size: 0.75rem;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .nav-tab.active .badge-step {
+      background: var(--primary);
+      color: white;
+    }
+
+    /* -----------------------------------------------------------
+       MAIN CONTENT CONTAINER
+       ----------------------------------------------------------- */
+    main {
+      flex: 1;
+      max-width: 1200px;
+      width: 100%;
+      margin: 1.5rem auto;
+      padding: 0 1rem;
+    }
+
+    .screen {
+      display: none;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* CARD STYLING */
+    .card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .card-title {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .card-subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem 1.25rem;
+      font-size: 0.925rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary-light);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: #2563eb;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn-secondary:hover {
+      background-color: #e2e8f0;
+    }
+
+    .btn-success {
+      background-color: #10b981;
+      color: white;
+    }
+
+    .btn-success:hover {
+      background-color: #059669;
+    }
+
+    .btn-sm {
+      padding: 0.4rem 0.8rem;
+      font-size: 0.825rem;
+    }
+
+    /* -----------------------------------------------------------
+       SCREEN 1: WELCOME & OBJECTIVES
+       ----------------------------------------------------------- */
+    .hero-banner {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe;
+      border-radius: var(--radius);
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .hero-banner h2 {
+      font-size: 1.85rem;
+      color: #1e3a8a;
+      margin-bottom: 0.5rem;
+      font-weight: 800;
+    }
+
+    .hero-banner p {
+      font-size: 1rem;
+      color: #334155;
+      max-width: 800px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .badge-tag {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badge-blue { background: #dbeafe; color: #1d4ed8; }
+    .badge-amber { background: #fef3c7; color: #b45309; }
+    .badge-green { background: #d1fae5; color: #065f46; }
+    .badge-purple { background: #ede9fe; color: #6d28d9; }
+
+    .formula-box {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 1rem 1.25rem;
+      border-radius: 8px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      margin: 0.75rem 0;
+      border-left: 4px solid var(--primary-light);
+    }
+
+    .variable-x {
+      color: #60a5fa;
+      font-weight: bold;
+    }
+
+    .variable-y {
+      color: #fbbf24;
+      font-weight: bold;
+    }
+
+    .constant-k {
+      color: #34d399;
+      font-weight: bold;
+    }
+
+    /* -----------------------------------------------------------
+       SCREEN 2: INTERACTIVE CONCEPT & CANVAS VISUALIZER
+       ----------------------------------------------------------- */
+    .lab-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 880px) {
+      .lab-layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .canvas-container {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+    }
+
+    canvas#coordCanvas {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      max-width: 100%;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.02);
+      cursor: crosshair;
+    }
+
+    .slider-group {
+      margin-bottom: 1rem;
+      background: #f8fafc;
+      padding: 0.85rem;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.4rem;
+      font-size: 0.875rem;
+    }
+
+    .slider-row label {
+      font-weight: 600;
+    }
+
+    .slider-row input[type="range"] {
+      width: 55%;
+      accent-color: var(--primary-light);
+    }
+
+    .slider-val {
+      font-weight: 700;
+      min-width: 30px;
+      text-align: right;
+    }
+
+    .intersection-display {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 8px;
+      padding: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .intersection-display h4 {
+      color: var(--primary-dark);
+      font-size: 0.95rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .intersection-coords {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    /* -----------------------------------------------------------
+       SCREEN 3: BRANCHING SCENARIO ("WHAT HAPPENS IF...")
+       ----------------------------------------------------------- */
+    .scenario-banner {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .branch-tree {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.25rem;
+      margin-top: 1rem;
+    }
+
+    .branch-card {
+      background: #ffffff;
+      border: 2px solid var(--border-color);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.25s;
+      position: relative;
+    }
+
+    .branch-card:hover {
+      border-color: var(--primary-light);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .branch-card.selected {
+      border-color: var(--primary);
+      background-color: #f0f7ff;
+    }
+
+    .branch-result-box {
+      margin-top: 1.5rem;
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      display: none;
+    }
+
+    /* -----------------------------------------------------------
+       SCREEN 4: INTERACTIVE MODEL BUILDER & BALANCE SCALE
+       ----------------------------------------------------------- */
+    .problem-story {
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 1.25rem;
+      margin-bottom: 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    .drag-drop-zone {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      min-height: 54px;
+      padding: 0.75rem;
+      background: #f8fafc;
+      border: 2px dashed #94a3b8;
+      border-radius: 8px;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+
+    .drag-drop-zone.active-target {
+      background: #eff6ff;
+      border-color: var(--primary-light);
+    }
+
+    .draggable-token {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 0.4rem 0.85rem;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      user-select: none;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s;
+    }
+
+    .draggable-token:hover {
+      background: #f1f5f9;
+      border-color: var(--primary-light);
+    }
+
+    .draggable-token.selected {
+      background: var(--primary-light);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .token-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    /* Scale Balance Metaphor */
+    .scale-visualizer {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 2rem;
+      margin: 1.5rem 0;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 8px;
+    }
+
+    .scale-pan {
+      background: #ffffff;
+      border: 2px solid #334155;
+      border-radius: 8px;
+      padding: 1rem 1.5rem;
+      min-width: 140px;
+      text-align: center;
+      font-weight: 700;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .scale-fulcrum {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--primary);
+    }
+
+    /* -----------------------------------------------------------
+       SCREEN 5: ADAPTIVE DIAGNOSTIC QUIZ (HOTS & Feedback)
+       ----------------------------------------------------------- */
+    .quiz-question-box {
+      margin-bottom: 1.5rem;
+    }
+
+    .quiz-question-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      color: var(--primary-dark);
+    }
+
+    .quiz-option {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.85rem 1.15rem;
+      margin-bottom: 0.6rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .quiz-option:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .quiz-option.correct {
+      background: #dcfce7 !important;
+      border-color: #22c55e !important;
+      color: #14532d;
+      font-weight: 600;
+    }
+
+    .quiz-option.incorrect {
+      background: #fee2e2 !important;
+      border-color: #ef4444 !important;
+      color: #7f1d1d;
+    }
+
+    .feedback-box {
+      display: none;
+      padding: 1rem;
+      border-radius: 8px;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .feedback-box.show {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-box.feedback-success {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+    }
+
+    .feedback-box.feedback-error {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #991b1b;
+    }
+
+    /* -----------------------------------------------------------
+       SCREEN 6: DIGITAL REFLECTION & SUMMARY REPORT
+       ----------------------------------------------------------- */
+    .reflection-textarea {
+      width: 100%;
+      min-height: 90px;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 0.75rem;
+      font-family: inherit;
+      font-size: 0.9rem;
+      resize: vertical;
+      margin-top: 0.5rem;
+    }
+
+    .reflection-textarea:focus {
+      outline: none;
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .scorecard {
+      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+      color: white;
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .scorecard-metrics {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .metric-item {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 0.75rem;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .metric-value {
+      font-size: 1.75rem;
+      font-weight: 800;
+    }
+
+    .metric-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      opacity: 0.9;
+    }
+
+    /* FOOTER CONTROLS */
+    footer.bottom-bar {
+      background: #ffffff;
+      border-top: 1px solid var(--border-color);
+      padding: 1rem 1.5rem;
+      margin-top: auto;
+    }
+
+    .footer-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    /* Print styling */
+    @media print {
+      header, nav.nav-bar, footer.bottom-bar, .no-print {
+        display: none !important;
+      }
+      .screen {
+        display: block !important;
+      }
+      body {
+        background: white;
+      }
+      .card {
+        box-shadow: none;
+        border: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOP HEADER -->
+  <header>
+    <div class="header-container">
+      <div class="brand">
+        <div class="brand-icon">XY</div>
+        <div class="brand-title">
+          <h1>LinearQuest: Dual-Variable Lab</h1>
+          <p>Grade X Mathematics • Teacher: Nabila Triasari, S.Pd. • SPLDV Explorer</p>
+        </div>
+      </div>
+      <div class="header-controls">
+        <div class="score-badge">
+          <span>XP Score:</span>
+          <span id="headerScore">0</span>
+          <span>/ 100</span>
+        </div>
+        <button class="audio-toggle-btn" id="audioToggleBtn" onclick="toggleAudioFeedback()">
+          Sound: ON 🔊
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- NON-LINEAR NAVIGATION (Mayer's Segmenting Principle) -->
+  <nav class="nav-bar">
+    <div class="nav-container">
+      <button class="nav-tab active" data-screen="screen-intro" onclick="switchScreen('screen-intro')">
+        <span class="badge-step">1</span>
+        <span>Mission & Objectives</span>
+      </button>
+      <button class="nav-tab" data-screen="screen-concept" onclick="switchScreen('screen-concept')">
+        <span class="badge-step">2</span>
+        <span>Graph & Dynamic Lab</span>
+      </button>
+      <button class="nav-tab" data-screen="screen-branching" onclick="switchScreen('screen-branching')">
+        <span class="badge-step">3</span>
+        <span>What-If Scenario</span>
+      </button>
+      <button class="nav-tab" data-screen="screen-builder" onclick="switchScreen('screen-builder')">
+        <span class="badge-step">4</span>
+        <span>Model Builder</span>
+      </button>
+      <button class="nav-tab" data-screen="screen-quiz" onclick="switchScreen('screen-quiz')">
+        <span class="badge-step">5</span>
+        <span>Adaptive Challenge</span>
+      </button>
+      <button class="nav-tab" data-screen="screen-reflection" onclick="switchScreen('screen-reflection')">
+        <span class="badge-step">6</span>
+        <span>Reflection & Report</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- MAIN INTERACTIVE CONTENT AREA -->
+  <main>
+
+    <!-- =========================================================================
+         SCREEN 1: WELCOME & ABCD LEARNING OBJECTIVES
+         ========================================================================= -->
+    <div id="screen-intro" class="screen active">
+      <div class="hero-banner">
+        <h2>Mastering Two Variables in Real-Life Systems</h2>
+        <p>
+          Welcome to the <strong>LinearQuest Interactive Laboratory</strong>! In this digital environment, you will explore how two interdependent variables can be mathematically modeled, graphically balanced, and algebraically solved to make informed real-world decisions.
+        </p>
+      </div>
+
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-tag badge-blue">Target</span>
+            ABCD Learning Objectives
+          </div>
+          <p class="card-subtitle">Clear competencies designed for Grade X Indonesian Curriculum (Fase E):</p>
+          
+          <ul style="padding-left: 1.25rem; font-size: 0.925rem; color: #334155; margin-bottom: 1rem; display: flex; flex-direction: column; gap: 0.6rem;">
+            <li><strong>Audience:</strong> Grade X High School / Vocational High School students.</li>
+            <li><strong>Behavior:</strong> Formulate mathematical models ($a_1x + b_1y = c_1$), test solution methods (graphical, substitution, elimination), and interpret coordinate intersections in real context.</li>
+            <li><strong>Condition:</strong> Utilizing non-linear exploratory digital media with dynamic canvas visualizers and instant diagnostic feedback.</li>
+            <li><strong>Degree:</strong> Achieving at least 85% mastery with logical mathematical reasoning and zero misconception regarding parallel vs coincident lines.</li>
+          </ul>
+
+          <div class="formula-box">
+            Standard System Format:<br>
+            <span class="variable-x">a₁x</span> + <span class="variable-y">b₁y</span> = <span class="constant-k">c₁</span> (Equation 1)<br>
+            <span class="variable-x">a₂x</span> + <span class="variable-y">b₂y</span> = <span class="constant-k">c₂</span> (Equation 2)
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">
+            <span class="badge-tag badge-green">Journey</span>
+            Deep Learning Cycle Alignment
+          </div>
+          <p class="card-subtitle">Three pillars of transformative deep learning in mathematics:</p>
+
+          <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div style="padding: 0.75rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #3b82f6;">
+              <h4 style="font-size: 0.9rem; color: #1e3a8a;">1. Mindful Awareness (Berkesadaran)</h4>
+              <p style="font-size: 0.825rem; color: #64748b;">Notice variables in your surroundings: cafeteria bundles, transport fares, production costs.</p>
+            </div>
+            <div style="padding: 0.75rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #10b981;">
+              <h4 style="font-size: 0.9rem; color: #065f46;">2. Meaningful Learning (Bermakna)</h4>
+              <p style="font-size: 0.825rem; color: #64748b;">Discover why lines intersect at point $(x, y)$ rather than blindly memorizing calculation formulas.</p>
+            </div>
+            <div style="padding: 0.75rem; background: #f8fafc; border-radius: 8px; border-left: 4px solid #f59e0b;">
+              <h4 style="font-size: 0.9rem; color: #92400e;">3. Joyful Exploration (Menggembirakan)</h4>
+              <p style="font-size: 0.825rem; color: #64748b;">Interact with real-time sliders, test 'What If' financial branches, and earn XP badges.</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 1.25rem; display: flex; gap: 0.5rem;">
+            <button class="btn btn-primary" onclick="switchScreen('screen-concept')">
+              Begin Exploration Lab &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 2: GRAPH & DYNAMIC LAB (Canvas Visualizer)
+         ========================================================================= -->
+    <div id="screen-concept" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <span class="badge-tag badge-purple">Visualizer</span>
+          Interactive Cartesian Coordinate Laboratory
+        </div>
+        <p class="card-subtitle">
+          Adjust coefficients $a_1, b_1, c_1$ for <strong>Line 1 (Blue)</strong> and $a_2, b_2, c_2$ for <strong>Line 2 (Orange)</strong>. Watch how their intersection represents the simultaneous solution $(x, y)$.
+        </p>
+
+        <div class="lab-layout">
+          <!-- Control Sliders -->
+          <div>
+            <div class="slider-group" style="border-top: 3px solid var(--accent-x);">
+              <h4 style="color: var(--accent-x); font-size: 0.95rem; margin-bottom: 0.5rem;">
+                Line 1: <span id="eq1Label">2x + 1y = 8</span>
+              </h4>
+              <div class="slider-row">
+                <label>Coefficient a₁:</label>
+                <input type="range" id="sliderA1" min="-5" max="5" step="1" value="2" oninput="updatePlot()">
+                <span class="slider-val" id="valA1">2</span>
+              </div>
+              <div class="slider-row">
+                <label>Coefficient b₁:</label>
+                <input type="range" id="sliderB1" min="-5" max="5" step="1" value="1" oninput="updatePlot()">
+                <span class="slider-val" id="valB1">1</span>
+              </div>
+              <div class="slider-row">
+                <label>Constant c₁:</label>
+                <input type="range" id="sliderC1" min="-20" max="20" step="1" value="8" oninput="updatePlot()">
+                <span class="slider-val" id="valC1">8</span>
+              </div>
+            </div>
+
+            <div class="slider-group" style="border-top: 3px solid var(--accent-y);">
+              <h4 style="color: var(--accent-y); font-size: 0.95rem; margin-bottom: 0.5rem;">
+                Line 2: <span id="eq2Label">1x + 2y = 7</span>
+              </h4>
+              <div class="slider-row">
+                <label>Coefficient a₂:</label>
+                <input type="range" id="sliderA2" min="-5" max="5" step="1" value="1" oninput="updatePlot()">
+                <span class="slider-val" id="valA2">1</span>
+              </div>
+              <div class="slider-row">
+                <label>Coefficient b₂:</label>
+                <input type="range" id="sliderB2" min="-5" max="5" step="1" value="2" oninput="updatePlot()">
+                <span class="slider-val" id="valB2">2</span>
+              </div>
+              <div class="slider-row">
+                <label>Constant c₂:</label>
+                <input type="range" id="sliderC2" min="-20" max="20" step="1" value="7" oninput="updatePlot()">
+                <span class="slider-val" id="valC2">7</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn btn-secondary btn-sm" onclick="setPreset('unique')">Preset: Standard (Unique Solution)</button>
+              <button class="btn btn-secondary btn-sm" onclick="setPreset('parallel')">Preset: Parallel (No Solution)</button>
+              <button class="btn btn-secondary btn-sm" onclick="setPreset('coincident')">Preset: Coincident (Infinite)</button>
+            </div>
+
+            <div class="intersection-display" id="intersectionStatusBox">
+              <h4>System State Analysis</h4>
+              <div class="intersection-coords" id="intersectionCoords">(x = 3.00, y = 2.00)</div>
+              <p id="systemStatusText" style="font-size: 0.85rem; color: #475569; margin-top: 0.25rem;">
+                Unique Solution: Lines intersect at exactly one coordinate point.
+              </p>
+            </div>
+          </div>
+
+          <!-- HTML5 Canvas Visualizer -->
+          <div class="canvas-container">
+            <canvas id="coordCanvas" width="460" height="420"></canvas>
+            <div style="font-size: 0.75rem; color: #64748b; margin-top: 0.5rem; text-align: center;">
+              Interactive Coordinate Grid [-10, 10] • Hover or adjust sliders above
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 3: BRANCHING SCENARIO ("WHAT HAPPENS IF...")
+         ========================================================================= -->
+    <div id="screen-branching" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <span class="badge-tag badge-amber">Case Study</span>
+          Branching Simulation: The Nusantara Eco-Market Canteen Challenge
+        </div>
+        <p class="card-subtitle">
+          Experience non-linear problem solving. Evaluate how different business and consumption bundles affect unit values.
+        </p>
+
+        <div class="scenario-banner">
+          <h4 style="color: #92400e; font-size: 1rem; margin-bottom: 0.35rem;">Real-World Context:</h4>
+          <p style="font-size: 0.9rem; color: #78350f;">
+            At SMA Nusantara's Eco-Festival, the Student Council operates a zero-waste refreshment booth. They sell two popular organic items:
+            <strong>Bamboo Cold Drinks (<span class="variable-x">x</span>)</strong> and <strong>Banana-Leaf Pastries (<span class="variable-y">y</span>)</strong>.
+            Two study groups purchased packages, but the individual item price tags were misplaced!
+          </p>
+          <div style="margin-top: 0.5rem; font-weight: 600; font-size: 0.875rem;">
+            Group A bought: <strong>3 Drinks + 2 Pastries for Rp 38,000</strong><br>
+            Group B bought: <strong>2 Drinks + 4 Pastries for Rp 44,000</strong>
+          </div>
+        </div>
+
+        <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 0.5rem;">Branching Decision: Choose Your Strategy Route</h3>
+        <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 1rem;">
+          Select how you want to analyze and tackle this system:
+        </p>
+
+        <div class="branch-tree">
+          <div class="branch-card" onclick="selectBranch('elimination')">
+            <span class="badge-tag badge-blue" style="margin-bottom: 0.5rem;">Route Alpha</span>
+            <h4 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.25rem;">Elimination Strategy</h4>
+            <p style="font-size: 0.825rem; color: #64748b;">
+              Equalize the coefficients of either Drinks (<span class="variable-x">x</span>) or Pastries (<span class="variable-y">y</span>) to eliminate one variable instantly.
+            </p>
+          </div>
+
+          <div class="branch-card" onclick="selectBranch('substitution')">
+            <span class="badge-tag badge-green" style="margin-bottom: 0.5rem;">Route Beta</span>
+            <h4 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.25rem;">Substitution Strategy</h4>
+            <p style="font-size: 0.825rem; color: #64748b;">
+              Isolate one variable (e.g. from Group B's equation) and substitute its expression into Group A's equation.
+            </p>
+          </div>
+
+          <div class="branch-card" onclick="selectBranch('budget-whatif')">
+            <span class="badge-tag badge-amber" style="margin-bottom: 0.5rem;">Route Gamma</span>
+            <h4 style="font-size: 1rem; color: var(--primary-dark); margin-bottom: 0.25rem;">"What If" Price Shock</h4>
+            <p style="font-size: 0.825rem; color: #64748b;">
+              What if sugar supply costs increase the drink price by Rp 2,000? How does the total spending budget adjust?
+            </p>
+          </div>
+        </div>
+
+        <!-- Dynamic Branch Result Box -->
+        <div id="branchResultBox" class="branch-result-box">
+          <div id="branchResultContent"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 4: INTERACTIVE MODEL BUILDER & SCALE BALANCE
+         ========================================================================= -->
+    <div id="screen-builder" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <span class="badge-tag badge-green">Modeling</span>
+          Interactive Equation Builder & Balance Scale
+        </div>
+        <p class="card-subtitle">
+          Construct algebraic equations by selecting terms. Observe how mathematical operations maintain balance on both sides of the equal sign.
+        </p>
+
+        <div class="problem-story">
+          <strong>Mission Task:</strong> Translate this real-world problem into a balanced equation:<br>
+          <em>"Dina buys 4 recycled notebooks (<span class="variable-x">x</span>) and 3 wooden pencils (<span class="variable-y">y</span>) for a total of Rp 29,000."</em>
+        </div>
+
+        <h4 style="font-size: 0.9rem; margin-bottom: 0.5rem;">Click tokens to place them into the Equation Workbench:</h4>
+        <div class="token-pool">
+          <div class="draggable-token" onclick="addToken('4x')">4x</div>
+          <div class="draggable-token" onclick="addToken('3y')">3y</div>
+          <div class="draggable-token" onclick="addToken('+')">+</div>
+          <div class="draggable-token" onclick="addToken('-')">-</div>
+          <div class="draggable-token" onclick="addToken('=')">=</div>
+          <div class="draggable-token" onclick="addToken('29000')">29,000</div>
+          <div class="draggable-token" onclick="addToken('2x')">2x</div>
+          <div class="draggable-token" onclick="addToken('5y')">5y</div>
+        </div>
+
+        <div style="font-size: 0.85rem; font-weight: 600; margin-bottom: 0.25rem;">Your Built Equation:</div>
+        <div class="drag-drop-zone" id="equationZone">
+          <span style="color: #94a3b8; font-style: italic; font-size: 0.875rem;" id="dropPlaceholder">
+            Tokens will appear here... Click tokens above to construct.
+          </span>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-bottom: 1.5rem;">
+          <button class="btn btn-primary btn-sm" onclick="verifyBuiltEquation()">Verify Model</button>
+          <button class="btn btn-secondary btn-sm" onclick="clearEquationZone()">Clear Reset</button>
+        </div>
+
+        <div id="builderFeedback" class="feedback-box"></div>
+
+        <!-- Balance Scale Simulation -->
+        <div style="border-top: 1px solid var(--border-color); padding-top: 1.25rem;">
+          <h4 style="font-size: 0.95rem; color: var(--primary-dark); margin-bottom: 0.25rem;">
+            Algebraic Principle: The Golden Rule of Balance
+          </h4>
+          <p style="font-size: 0.85rem; color: #64748b;">
+            Whatever you add, subtract, multiply, or divide on the left pan must be equally performed on the right pan.
+          </p>
+
+          <div class="scale-visualizer">
+            <div class="scale-pan" id="leftPan">Left Side: 4x + 3y</div>
+            <div class="scale-fulcrum">⚖️ =</div>
+            <div class="scale-pan" id="rightPan">Right Side: 29,000</div>
+          </div>
+
+          <div style="display: flex; gap: 0.5rem; justify-content: center; flex-wrap: wrap;">
+            <button class="btn btn-secondary btn-sm" onclick="simulateScaleOp('sub3y')">Subtract 3y from Both Sides</button>
+            <button class="btn btn-secondary btn-sm" onclick="simulateScaleOp('div4')">Divide Both Sides by 4</button>
+            <button class="btn btn-secondary btn-sm" onclick="simulateScaleOp('reset')">Reset Original Balance</button>
+          </div>
+          <div id="scaleOpExplanation" style="text-align: center; font-size: 0.85rem; color: #334155; margin-top: 0.75rem; font-weight: 600;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 5: ADAPTIVE DIAGNOSTIC QUIZ (Immediate Feedback)
+         ========================================================================= -->
+    <div id="screen-quiz" class="screen">
+      <div class="card">
+        <div class="card-title">
+          <span class="badge-tag badge-purple">Assessment</span>
+          Adaptive Diagnostic Challenge
+        </div>
+        <p class="card-subtitle">
+          Test your conceptual understanding, modeling precision, and problem-solving strategy. Receive instant cognitive feedback on every response.
+        </p>
+
+        <!-- Question 1 -->
+        <div class="quiz-question-box" id="qBox1">
+          <div class="quiz-question-title">
+            Question 1 (HOT - Mathematical Modeling):<br>
+            <span style="font-size: 0.925rem; font-weight: normal; color: #334155;">
+              A local artisan cooperative produces handwoven caps (<span class="variable-x">x</span>) and embroidered scarfs (<span class="variable-y">y</span>). 
+              A cap requires 2 hours of loom work and 1 hour of embroidery. A scarf requires 3 hours of loom work and 2 hours of embroidery. 
+              The total available loom time is 48 hours, and total embroidery time is 28 hours. Which system of linear equations correctly represents this constraint?
+            </span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(1, 0)">
+            <span>A) 2x + 3y = 48 &nbsp;and&nbsp; x + 2y = 28</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(1, 1)">
+            <span>B) 2x + y = 48 &nbsp;and&nbsp; 3x + 2y = 28</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(1, 2)">
+            <span>C) 5x + 3y = 76 &nbsp;and&nbsp; x + y = 28</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(1, 3)">
+            <span>D) 3x + 2y = 48 &nbsp;and&nbsp; 2x + y = 28</span>
+          </div>
+          <div id="quizFeedback1" class="feedback-box"></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+
+        <!-- Question 2 -->
+        <div class="quiz-question-box" id="qBox2">
+          <div class="quiz-question-title">
+            Question 2 (Conceptual - System Consistency):<br>
+            <span style="font-size: 0.925rem; font-weight: normal; color: #334155;">
+              Consider the system: <strong>2x + 4y = 12</strong> and <strong>x + 2y = 10</strong>. 
+              What is the geometric and algebraic interpretation of this system?
+            </span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(2, 0)">
+            <span>A) The lines intersect at (2, 2); unique solution.</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(2, 1)">
+            <span>B) The lines are identical (coincident); infinitely many solutions.</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(2, 2)">
+            <span>C) The lines are parallel with equal slopes but different intercepts; no solution (inconsistent).</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(2, 3)">
+            <span>D) The system has negative coordinates only.</span>
+          </div>
+          <div id="quizFeedback2" class="feedback-box"></div>
+        </div>
+
+        <hr style="border: 0; border-top: 1px solid var(--border-color); margin: 1.5rem 0;">
+
+        <!-- Question 3 -->
+        <div class="quiz-question-box" id="qBox3">
+          <div class="quiz-question-title">
+            Question 3 (Real-World Interpretation):<br>
+            <span style="font-size: 0.925rem; font-weight: normal; color: #334155;">
+              By solving a school ticket sales system, you obtain <strong>(x = 35, y = -5)</strong> where <em>x</em> represents adult tickets and <em>y</em> represents student tickets sold. How should an astute mathematician evaluate this result?
+            </span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(3, 0)">
+            <span>A) Mathematically valid and realistically plausible: student tickets were discounted.</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(3, 1)">
+            <span>B) Mathematically solvable, but in the real world physical ticket counts must satisfy x ≥ 0 and y ≥ 0, indicating an error in model constraints or recorded revenue data.</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(3, 2)">
+            <span>C) The solution means 5 student tickets were refunded and cancelled.</span>
+          </div>
+          <div class="quiz-option" onclick="checkQuiz(3, 3)">
+            <span>D) Convert -5 to +5 and proceed.</span>
+          </div>
+          <div id="quizFeedback3" class="feedback-box"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- =========================================================================
+         SCREEN 6: DIGITAL REFLECTION & SUMMARY REPORT
+         ========================================================================= -->
+    <div id="screen-reflection" class="screen">
+      <div class="scorecard">
+        <h2 style="font-size: 1.4rem; font-weight: 800; margin-bottom: 0.25rem;">
+          Congratulations! You Completed the LinearQuest Lab
+        </h2>
+        <p style="font-size: 0.85rem; opacity: 0.9;">
+          Here is your comprehensive performance analytic summary for submission to your teacher and Rumah Pendidikan / Ruang Murid Kemendikdasmen.
+        </p>
+
+        <div class="scorecard-metrics">
+          <div class="metric-item">
+            <div class="metric-value" id="finalScoreVal">0</div>
+            <div class="metric-label">XP Mastery Score</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value" id="finalAccuracyVal">0%</div>
+            <div class="metric-label">Quiz Accuracy</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value" id="badgesEarnedCount">3</div>
+            <div class="metric-label">Badges Unlocked</div>
+          </div>
+          <div class="metric-item">
+            <div class="metric-value" id="tpackLevelVal">Advancing</div>
+            <div class="metric-label">TPACK Target Level</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">
+          <span class="badge-tag badge-blue">Meta-Cognition</span>
+          Student Reflection Journal (Deep Learning Pillar 3: Merefleksi)
+        </div>
+        <p class="card-subtitle">
+          Take 3 minutes to reflect on your cognitive process. Type your thoughts into the prompts below:
+        </p>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-weight: 600; font-size: 0.9rem;">
+            1. Strategy Comparison: Between Substitution, Elimination, and Graphical methods, which one felt most intuitive to you and in what situation would you use it?
+          </label>
+          <textarea class="reflection-textarea" id="refStrategy" placeholder="Write your reflection here (e.g., I prefer elimination when coefficients can be easily multiplied, but graphing helped me understand the geometric meaning of intersection...)"></textarea>
+        </div>
+
+        <div style="margin-bottom: 1.25rem;">
+          <label style="font-weight: 600; font-size: 0.9rem;">
+            2. Real-World Connection: Identify one problem in your daily life or school community that could be solved by modeling two linear equations with two variables.
+          </label>
+          <textarea class="reflection-textarea" id="refRealWorld" placeholder="Describe your real-life example here (e.g., comparing two internet subscription packages with different base fees and per-GB rates...)"></textarea>
+        </div>
+
+        <!-- Teacher & Principal Verification & Signature Block -->
+        <div style="margin-top: 1.5rem; padding: 1.25rem; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px;">
+          <div style="margin-bottom: 0.75rem;">
+            <span class="badge-tag badge-blue">Official School Endorsement</span>
+            <h4 style="font-size: 1rem; color: #1e3a8a; margin-top: 0.25rem;">Educational Validation & Assessment Signatures</h4>
+          </div>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1rem; margin-top: 0.75rem;">
+            <!-- Principal Signature -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 1rem; text-align: center;">
+              <p style="font-size: 0.75rem; text-transform: uppercase; color: #64748b; font-weight: 600;">Acknowledged By:</p>
+              <p style="font-size: 0.85rem; font-weight: 700; color: #0f172a; margin-bottom: 1.25rem;">School Principal</p>
+              <div style="width: 140px; margin: 0 auto 0.75rem; border-b: 1px dashed #94a3b8; height: 35px;"></div>
+              <p style="font-size: 0.9rem; font-weight: 800; color: #1e293b;">A. Rofiq Ghozali, S.Pt</p>
+              <p style="font-size: 0.7rem; color: #64748b; font-family: monospace;">NIP. ........................................</p>
+            </div>
+
+            <!-- Subject Teacher Signature -->
+            <div style="background: #ffffff; border: 2px solid #bfdbfe; border-radius: 8px; padding: 1rem; text-align: center;">
+              <p style="font-size: 0.75rem; text-transform: uppercase; color: #2563eb; font-weight: 700;">Evaluating Instructor:</p>
+              <p style="font-size: 0.85rem; font-weight: 700; color: #1e3a8a; margin-bottom: 1.25rem;">Mathematics Teacher</p>
+              <div style="width: 140px; margin: 0 auto 0.75rem; border-b: 1px dashed #3b82f6; height: 35px;"></div>
+              <p style="font-size: 0.9rem; font-weight: 800; color: #1d4ed8;">Nabila Triasari, S.Pd.</p>
+              <p style="font-size: 0.7rem; color: #64748b; font-family: monospace;">NIP/NUPTK. ........................................</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.25rem;">
+          <button class="btn btn-primary" onclick="generateStudentReport()">
+            📥 Generate & Download Learning Report (.txt)
+          </button>
+          <button class="btn btn-secondary" onclick="window.print()">
+            🖨️ Print Student Portfolio / PDF
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- BOTTOM FOOTER CONTROLS (User Control) -->
+  <footer class="bottom-bar">
+    <div class="footer-container">
+      <div style="display: flex; gap: 0.5rem;">
+        <button class="btn btn-secondary btn-sm" id="btnPrev" onclick="navigateStep(-1)">
+          &larr; Previous Screen
+        </button>
+        <button class="btn btn-primary btn-sm" id="btnNext" onclick="navigateStep(1)">
+          Next Screen &rarr;
+        </button>
+      </div>
+
+      <div style="font-size: 0.825rem; color: #64748b;">
+        Progress: Screen <span id="currentScreenNum">1</span> of 6 • Ruang Murid & TPACK Aligned
+      </div>
+    </div>
+  </footer>
+
+  <!-- =========================================================================
+       PURE VANILLA JAVASCRIPT ENGINE
+       Includes: Canvas Cartesian Plotter, Web Audio Synthesizer, State Manager
+       ========================================================================= -->
+  <script>
+    // -------------------------------------------------------------
+    // STATE & APP VARIABLES
+    // -------------------------------------------------------------
+    const screens = [
+      'screen-intro',
+      'screen-concept',
+      'screen-branching',
+      'screen-builder',
+      'screen-quiz',
+      'screen-reflection'
+    ];
+    let currentScreenIndex = 0;
+    let xpScore = 0;
+    let quizAttempts = { 1: false, 2: false, 3: false };
+    let quizCorrect = { 1: false, 2: false, 3: false };
+    let audioEnabled = true;
+    let userBuiltEquation = [];
+
+    // -------------------------------------------------------------
+    // WEB AUDIO API SYNTHESIZER (Pure JS Chimes, Zero External MP3)
+    // -------------------------------------------------------------
+    let audioCtx = null;
+
+    function playTone(type) {
+      if (!audioEnabled) return;
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+
+        const now = audioCtx.currentTime;
+
+        if (type === 'success') {
+          // Cheerful chime: C5 -> G5
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(523.25, now);
+          osc.frequency.exponentialRampToValueAtTime(783.99, now + 0.15);
+          gain.gain.setValueAtTime(0.18, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+          osc.start(now);
+          osc.stop(now + 0.35);
+        } else if (type === 'hint') {
+          // Soft attention chime
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          gain.gain.setValueAtTime(0.12, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        } else if (type === 'error') {
+          // Low gentle bump
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(220, now);
+          osc.frequency.setValueAtTime(196, now + 0.1);
+          gain.gain.setValueAtTime(0.15, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+          osc.start(now);
+          osc.stop(now + 0.25);
+        }
+      } catch (err) {
+        console.warn('Web Audio not accessible yet', err);
+      }
+    }
+
+    function toggleAudioFeedback() {
+      audioEnabled = !audioEnabled;
+      const btn = document.getElementById('audioToggleBtn');
+      if (audioEnabled) {
+        btn.textContent = 'Sound: ON 🔊';
+        playTone('hint');
+      } else {
+        btn.textContent = 'Sound: OFF 🔇';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // NAVIGATION CONTROLLER (Non-linear & User Control)
+    // -------------------------------------------------------------
+    function switchScreen(screenId) {
+      screens.forEach((id, idx) => {
+        const el = document.getElementById(id);
+        const tab = document.querySelector(`.nav-tab[data-screen="${id}"]`);
+        if (id === screenId) {
+          el.classList.add('active');
+          if (tab) tab.classList.add('active');
+          currentScreenIndex = idx;
+        } else {
+          el.classList.remove('active');
+          if (tab) tab.classList.remove('active');
+        }
+      });
+
+      document.getElementById('currentScreenNum').textContent = currentScreenIndex + 1;
+      document.getElementById('btnPrev').disabled = (currentScreenIndex === 0);
+      document.getElementById('btnNext').disabled = (currentScreenIndex === screens.length - 1);
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+
+      // Refresh canvas if entering graph screen
+      if (screenId === 'screen-concept') {
+        setTimeout(updatePlot, 50);
+      }
+    }
+
+    function navigateStep(direction) {
+      const nextIdx = currentScreenIndex + direction;
+      if (nextIdx >= 0 && nextIdx < screens.length) {
+        switchScreen(screens[nextIdx]);
+      }
+    }
+
+    function addScore(points) {
+      xpScore = Math.min(100, xpScore + points);
+      document.getElementById('headerScore').textContent = xpScore;
+      document.getElementById('finalScoreVal').textContent = xpScore;
+      
+      const correctCount = Object.values(quizCorrect).filter(Boolean).length;
+      const acc = Math.round((correctCount / 3) * 100);
+      document.getElementById('finalAccuracyVal').textContent = `${acc}%`;
+    }
+
+    // -------------------------------------------------------------
+    // SCREEN 2: DYNAMIC CARTESIAN GRAPH ENGINE (Pure HTML5 Canvas)
+    // -------------------------------------------------------------
+    const canvas = document.getElementById('coordCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function drawGrid() {
+      const w = canvas.width;
+      const h = canvas.height;
+      const cx = w / 2;
+      const cy = h / 2;
+      const step = 20; // 20 pixels = 1 unit
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Light grid lines
+      ctx.strokeStyle = '#f1f5f9';
+      ctx.lineWidth = 1;
+      for (let x = cx % step; x < w; x += step) {
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+      for (let y = cy % step; y < h; y += step) {
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // X and Y Axes
+      ctx.strokeStyle = '#94a3b8';
+      ctx.lineWidth = 2;
+      // X Axis
+      ctx.beginPath();
+      ctx.moveTo(0, cy);
+      ctx.lineTo(w, cy);
+      ctx.stroke();
+      // Y Axis
+      ctx.beginPath();
+      ctx.moveTo(cx, 0);
+      ctx.lineTo(cx, h);
+      ctx.stroke();
+
+      // Axis Marks & Labels
+      ctx.fillStyle = '#64748b';
+      ctx.font = '10px system-ui, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'top';
+
+      for (let i = -10; i <= 10; i += 2) {
+        if (i !== 0) {
+          const px = cx + i * step;
+          const py = cy - i * step;
+          ctx.fillText(i, px, cy + 4);
+          ctx.fillText(i, cx - 12, py - 4);
+        }
+      }
+      ctx.fillText('0', cx - 8, cy + 4);
+    }
+
+    function drawLine(a, b, c, color, width = 2.5) {
+      const cx = canvas.width / 2;
+      const cy = canvas.height / 2;
+      const step = 20;
+
+      // ax + by = c
+      // If b != 0: y = (c - ax) / b
+      // If b == 0: x = c / a
+      ctx.strokeStyle = color;
+      ctx.lineWidth = width;
+      ctx.beginPath();
+
+      if (b !== 0) {
+        const xMin = -12;
+        const xMax = 12;
+        const y1 = (c - a * xMin) / b;
+        const y2 = (c - a * xMax) / b;
+
+        const px1 = cx + xMin * step;
+        const py1 = cy - y1 * step;
+        const px2 = cx + xMax * step;
+        const py2 = cy - y2 * step;
+
+        ctx.moveTo(px1, py1);
+        ctx.lineTo(px2, py2);
+      } else if (a !== 0) {
+        const xFixed = c / a;
+        const px = cx + xFixed * step;
+        ctx.moveTo(px, 0);
+        ctx.lineTo(px, canvas.height);
+      }
+      ctx.stroke();
+    }
+
+    function updatePlot() {
+      const a1 = parseInt(document.getElementById('sliderA1').value);
+      const b1 = parseInt(document.getElementById('sliderB1').value);
+      const c1 = parseInt(document.getElementById('sliderC1').value);
+
+      const a2 = parseInt(document.getElementById('sliderA2').value);
+      const b2 = parseInt(document.getElementById('sliderB2').value);
+      const c2 = parseInt(document.getElementById('sliderC2').value);
+
+      document.getElementById('valA1').textContent = a1;
+      document.getElementById('valB1').textContent = b1;
+      document.getElementById('valC1').textContent = c1;
+      document.getElementById('valA2').textContent = a2;
+      document.getElementById('valB2').textContent = b2;
+      document.getElementById('valC2').textContent = c2;
+
+      document.getElementById('eq1Label').textContent = `${a1}x + ${b1}y = ${c1}`;
+      document.getElementById('eq2Label').textContent = `${a2}x + ${b2}y = ${c2}`;
+
+      drawGrid();
+      // Line 1: Blue
+      drawLine(a1, b1, c1, '#2563eb', 3);
+      // Line 2: Orange/Amber
+      drawLine(a2, b2, c2, '#d97706', 3);
+
+      // Solve system algebraically: Determinant method
+      // a1*x + b1*y = c1
+      // a2*x + b2*y = c2
+      const det = a1 * b2 - a2 * b1;
+      const detX = c1 * b2 - c2 * b1;
+      const detY = a1 * c2 - a2 * c1;
+
+      const coordsDisplay = document.getElementById('intersectionCoords');
+      const statusText = document.getElementById('systemStatusText');
+      const box = document.getElementById('intersectionStatusBox');
+
+      if (det !== 0) {
+        const x = detX / det;
+        const y = detY / det;
+        coordsDisplay.textContent = `(x = ${x.toFixed(2)}, y = ${y.toFixed(2)})`;
+        statusText.textContent = 'Unique Solution: The two lines have different slopes and intersect at exactly one coordinate point.';
+        box.style.background = '#eff6ff';
+        box.style.borderColor = '#bfdbfe';
+
+        // Draw intersection dot on canvas
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const step = 20;
+        const px = cx + x * step;
+        const py = cy - y * step;
+
+        ctx.fillStyle = '#dc2626';
+        ctx.beginPath();
+        ctx.arc(px, py, 6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        // Label dot
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 11px system-ui, sans-serif';
+        ctx.fillText(`(${x.toFixed(1)}, ${y.toFixed(1)})`, px + 10, py - 6);
+
+      } else {
+        // det === 0 -> either parallel or coincident
+        if (detX === 0 && detY === 0) {
+          coordsDisplay.textContent = 'Infinitely Many Solutions';
+          statusText.textContent = 'Coincident Lines: Both equations describe the exact same geometric line. Every point on the line is a solution.';
+          box.style.background = '#fef3c7';
+          box.style.borderColor = '#fde68a';
+        } else {
+          coordsDisplay.textContent = 'No Solution (Inconsistent)';
+          statusText.textContent = 'Parallel Lines: The lines share identical slopes but different intercepts. They will never meet (Distance is constant).';
+          box.style.background = '#fee2e2';
+          box.style.borderColor = '#fca5a5';
+        }
+      }
+    }
+
+    function setPreset(type) {
+      if (type === 'unique') {
+        document.getElementById('sliderA1').value = 2;
+        document.getElementById('sliderB1').value = 1;
+        document.getElementById('sliderC1').value = 8;
+        document.getElementById('sliderA2').value = 1;
+        document.getElementById('sliderB2').value = 2;
+        document.getElementById('sliderC2').value = 7;
+      } else if (type === 'parallel') {
+        document.getElementById('sliderA1').value = 2;
+        document.getElementById('sliderB1').value = 4;
+        document.getElementById('sliderC1').value = 8;
+        document.getElementById('sliderA2').value = 1;
+        document.getElementById('sliderB2').value = 2;
+        document.getElementById('sliderC2').value = 10;
+      } else if (type === 'coincident') {
+        document.getElementById('sliderA1').value = 2;
+        document.getElementById('sliderB1').value = 4;
+        document.getElementById('sliderC1').value = 8;
+        document.getElementById('sliderA2').value = 1;
+        document.getElementById('sliderB2').value = 2;
+        document.getElementById('sliderC2').value = 4;
+      }
+      playTone('hint');
+      updatePlot();
+    }
+
+    // -------------------------------------------------------------
+    // SCREEN 3: BRANCHING SCENARIO CONTROLLER
+    // -------------------------------------------------------------
+    function selectBranch(route) {
+      playTone('hint');
+      const box = document.getElementById('branchResultBox');
+      const content = document.getElementById('branchResultContent');
+      box.style.display = 'block';
+
+      // Mark selected card
+      document.querySelectorAll('.branch-card').forEach(c => c.classList.remove('selected'));
+      event.currentTarget.classList.add('selected');
+
+      if (route === 'elimination') {
+        content.innerHTML = `
+          <h4 style="color: #1e3a8a; margin-bottom: 0.5rem;">Route Alpha: Elimination Method Step-by-Step</h4>
+          <p style="font-size: 0.9rem; color: #334155; margin-bottom: 0.5rem;">
+            Given the two equations:<br>
+            [1] <strong>3x + 2y = 38,000</strong><br>
+            [2] <strong>2x + 4y = 44,000</strong>
+          </p>
+          <div style="background: #f8fafc; padding: 0.75rem; border-radius: 8px; font-family: monospace; font-size: 0.875rem;">
+            Step 1: Multiply [1] by 2 to match the y-coefficient: <strong>6x + 4y = 76,000</strong><br>
+            Step 2: Subtract [2] (2x + 4y = 44,000):<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(6x - 2x) = 76,000 - 44,000 &rarr; <strong>4x = 32,000</strong><br>
+            Step 3: Solve for x: <strong>x = Rp 8,000</strong> (Unit price of Bamboo Drink)<br>
+            Step 4: Substitute x into [1]: 3(8,000) + 2y = 38,000 &rarr; 24,000 + 2y = 38,000 &rarr; 2y = 14,000 &rarr; <strong>y = Rp 7,000</strong> (Unit price of Pastry).
+          </div>
+          <div style="margin-top: 0.75rem; color: #065f46; font-weight: 600; font-size: 0.9rem;">
+            &check; Decision Insight: Elimination is fast when one coefficient is an exact integer factor of another!
+          </div>
+        `;
+        addScore(10);
+      } else if (route === 'substitution') {
+        content.innerHTML = `
+          <h4 style="color: #065f46; margin-bottom: 0.5rem;">Route Beta: Substitution Method Step-by-Step</h4>
+          <p style="font-size: 0.9rem; color: #334155; margin-bottom: 0.5rem;">
+            Notice Equation [2]: <strong>2x + 4y = 44,000</strong> can be divided cleanly by 2!
+          </p>
+          <div style="background: #f8fafc; padding: 0.75rem; border-radius: 8px; font-family: monospace; font-size: 0.875rem;">
+            Divide [2] by 2: <strong>x + 2y = 22,000</strong> &rarr; Express x: <strong>x = 22,000 - 2y</strong><br>
+            Substitute this expression into Equation [1]:<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3(22,000 - 2y) + 2y = 38,000<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;66,000 - 6y + 2y = 38,000<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;66,000 - 4y = 38,000 &rarr; 4y = 28,000 &rarr; <strong>y = Rp 7,000</strong><br>
+            Now solve for x: x = 22,000 - 2(7,000) = 22,000 - 14,000 = <strong>Rp 8,000</strong>.
+          </div>
+          <div style="margin-top: 0.75rem; color: #065f46; font-weight: 600; font-size: 0.9rem;">
+            &check; Decision Insight: Substitution works best when at least one variable has a coefficient of 1.
+          </div>
+        `;
+        addScore(10);
+      } else if (route === 'budget-whatif') {
+        content.innerHTML = `
+          <h4 style="color: #b45309; margin-bottom: 0.5rem;">Route Gamma: "What If" Dynamic Shock Analysis</h4>
+          <p style="font-size: 0.9rem; color: #334155; margin-bottom: 0.5rem;">
+            Suppose inflation shifts Bamboo Drinks price from <strong>x = 8,000</strong> to <strong>x' = 10,000</strong> (+Rp 2,000).
+          </p>
+          <div style="background: #fefce8; padding: 0.75rem; border-radius: 8px; font-size: 0.875rem; color: #78350f;">
+            &bull; Group A's new cost: 3(10,000) + 2(7,000) = 30,000 + 14,000 = <strong>Rp 44,000</strong> (+Rp 6,000 increase)<br>
+            &bull; Group B's new cost: 2(10,000) + 4(7,000) = 20,000 + 28,000 = <strong>Rp 48,000</strong> (+Rp 4,000 increase)<br>
+            <strong>Managerial Takeaway:</strong> Group A suffers a greater percentage cost jump because their consumption bundle is more drink-heavy (3 vs 2)!
+          </div>
+        `;
+        addScore(15);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SCREEN 4: MODEL BUILDER CONTROLLER
+    // -------------------------------------------------------------
+    function addToken(token) {
+      playTone('hint');
+      userBuiltEquation.push(token);
+      renderEquationZone();
+    }
+
+    function renderEquationZone() {
+      const zone = document.getElementById('equationZone');
+      zone.innerHTML = '';
+      if (userBuiltEquation.length === 0) {
+        zone.innerHTML = `<span style="color: #94a3b8; font-style: italic; font-size: 0.875rem;">Tokens will appear here... Click tokens above to construct.</span>`;
+        return;
+      }
+      userBuiltEquation.forEach((tok, index) => {
+        const span = document.createElement('span');
+        span.className = 'draggable-token selected';
+        span.style.cursor = 'pointer';
+        span.title = 'Click to remove';
+        span.textContent = tok + ' ✕';
+        span.onclick = () => {
+          userBuiltEquation.splice(index, 1);
+          renderEquationZone();
+        };
+        zone.appendChild(span);
+      });
+    }
+
+    function clearEquationZone() {
+      userBuiltEquation = [];
+      renderEquationZone();
+      const fb = document.getElementById('builderFeedback');
+      fb.className = 'feedback-box';
+      fb.style.display = 'none';
+    }
+
+    function verifyBuiltEquation() {
+      const str = userBuiltEquation.join('');
+      const fb = document.getElementById('builderFeedback');
+      fb.className = 'feedback-box show';
+
+      // Correct variations: 4x+3y=29000 or 3y+4x=29000
+      if (str === '4x+3y=29000' || str === '3y+4x=29000') {
+        fb.className += ' feedback-success';
+        fb.innerHTML = `<strong>&check; Outstanding!</strong> You modeled the situation accurately: 4 notebooks (4x) plus 3 pencils (3y) equals Rp 29,000 total price. +15 XP Awarded!`;
+        playTone('success');
+        addScore(15);
+      } else {
+        fb.className += ' feedback-error';
+        fb.innerHTML = `<strong>&cross; Keep trying!</strong> Look at the coefficients in the story: <em>4 notebooks (x)</em> and <em>3 pencils (y)</em> totaling <em>29,000</em>. Expected structure: <code>4x + 3y = 29000</code>.`;
+        playTone('error');
+      }
+    }
+
+    function simulateScaleOp(op) {
+      playTone('hint');
+      const left = document.getElementById('leftPan');
+      const right = document.getElementById('rightPan');
+      const expl = document.getElementById('scaleOpExplanation');
+
+      if (op === 'sub3y') {
+        left.textContent = 'Left: 4x';
+        right.textContent = 'Right: 29,000 - 3y';
+        expl.textContent = 'Subtracted 3y from both sides: The balance remains level because identical quantities were removed!';
+      } else if (op === 'div4') {
+        left.textContent = 'Left: x';
+        right.textContent = 'Right: (29,000 - 3y) / 4';
+        expl.textContent = 'Divided both sides by 4: We have successfully isolated variable x!';
+      } else {
+        left.textContent = 'Left Side: 4x + 3y';
+        right.textContent = 'Right Side: 29,000';
+        expl.textContent = 'Scale balance reset to initial equation state: 4x + 3y = 29,000.';
+      }
+    }
+
+    // -------------------------------------------------------------
+    // SCREEN 5: ADAPTIVE QUIZ ENGINE
+    // -------------------------------------------------------------
+    const quizData = [
+      {
+        correctIndex: 0,
+        explanation: 'Loom hours form Equation 1: 2 hours per cap (2x) + 3 hours per scarf (3y) = 48 hours. Embroidery hours form Equation 2: 1 hour per cap (1x) + 2 hours per scarf (2y) = 28 hours.',
+        hint: 'Separate the two distinct constraints: Loom machine capacity vs. Embroidery labor capacity.'
+      },
+      {
+        correctIndex: 2,
+        explanation: 'Multiplying the second equation (x + 2y = 10) by 2 gives 2x + 4y = 20. But the first equation is 2x + 4y = 12. Since 20 ≠ 12, there are no pairs (x, y) that satisfy both simultaneously. Geometrically, these lines are parallel and never intersect.',
+        hint: 'Examine the ratios of coefficients: 2/1 = 4/2 = 2, but constant ratio is 12/10 ≠ 2.'
+      },
+      {
+        correctIndex: 1,
+        explanation: 'In physical applications, domain constraints require non-negative integers for tangible items (tickets, people, items). A negative count (-5) alerts the data analyst to re-check source records or constraint models.',
+        hint: 'Can a theater or school box office sell a negative quantity of admission tickets?'
+      }
+    ];
+
+    function checkQuiz(qNum, selectedOptionIdx) {
+      const qIndex = qNum - 1;
+      const q = quizData[qIndex];
+      const box = document.getElementById(`qBox${qNum}`);
+      const options = box.querySelectorAll('.quiz-option');
+      const fb = document.getElementById(`quizFeedback${qNum}`);
+
+      options.forEach(opt => opt.classList.remove('correct', 'incorrect'));
+      fb.className = 'feedback-box show';
+
+      if (selectedOptionIdx === q.correctIndex) {
+        options[selectedOptionIdx].classList.add('correct');
+        fb.className += ' feedback-success';
+        fb.innerHTML = `<strong>&check; Correct!</strong> ${q.explanation}`;
+        playTone('success');
+
+        if (!quizCorrect[qNum]) {
+          quizCorrect[qNum] = true;
+          addScore(15);
+        }
+      } else {
+        options[selectedOptionIdx].classList.add('incorrect');
+        options[q.correctIndex].classList.add('correct');
+        fb.className += ' feedback-error';
+        fb.innerHTML = `<strong>&cross; Not quite.</strong> ${q.explanation} <br><em>Key diagnostic: ${q.hint}</em>`;
+        playTone('error');
+      }
+      quizAttempts[qNum] = true;
+    }
+
+    // -------------------------------------------------------------
+    // SCREEN 6: REPORT EXPORT & REFLECTION
+    // -------------------------------------------------------------
+    function generateStudentReport() {
+      playTone('success');
+      const s1 = document.getElementById('refStrategy').value.trim() || 'No reflection entered.';
+      const s2 = document.getElementById('refRealWorld').value.trim() || 'No reflection entered.';
+      const score = document.getElementById('headerScore').textContent;
+
+      const reportText = `========================================================
+STUDENT LEARNING PORTFOLIO: LINEARQUEST SPLDV LAB
+Platform: Ruang Murid / Rumah Pendidikan Kemendikdasmen Standard
+Subject: Mathematics (Grade X - Fase E)
+Topic: System of Linear Equations in Two Variables (SPLDV)
+========================================================
+
+1. ASSESSMENT ANALYTICS:
+- Final XP Score: ${score} / 100
+- Quiz Questions Completed: 3 of 3
+- TPACK Level Achieved: Advancing (Digital Modeling & Reasoning)
+
+2. DEEP LEARNING REFLECTION LOG:
+[Prompt 1: Strategy Comparison]
+${s1}
+
+[Prompt 2: Real-World Modeling Application]
+${s2}
+
+3. TEACHER & INSTITUTION VERIFICATION:
+- Evaluating Teacher : Nabila Triasari, S.Pd. (Guru Mata Pelajaran Matematika)
+- School Principal   : A. Rofiq Ghozali, S.Pt (Kepala Sekolah)
+- Validation Status  : [ VERIFIED & OFFICIALLY SIGNED ]
+- Validated on       : ${new Date().toLocaleString()}
+========================================================`;
+
+      const blob = new Blob([reportText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `SPLDV_Student_Learning_Report_GradeX.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Initialize on document ready
+    window.addEventListener('DOMContentLoaded', () => {
+      updatePlot();
+    });
+  </script>
+</body>
+</html>
